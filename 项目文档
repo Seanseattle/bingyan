@@ -1,0 +1,38 @@
+    			匿名社区
+概述：前端，使用bootstrap框架和jQuery库，有基本的动画效果。
+      后台：使用flask框架，数据库采用mongodb。
+
+
+数据库结构：
+将帖子和评论按同种格式存储，用户与帖子的关系存储采用分布式
+post_info = {
+    "content": "",                    #帖子的内容
+    "post_time": datetime.now(),      #帖子的时间戳
+    "praise_count": 0,                #点赞人数
+    "username": "",                   #发表该帖子的用户名
+    "comment_by": [],		      #评论该帖子或者的帖子id
+    "read": [],			      #是否已读
+    "order": 			      #读取的优先级
+    "tag": [],			      #帖子的分类
+    "comment_who": ObjectId(),	      #该帖子评论的帖子id
+    "root_id": ObjectId()	      #该帖子的根帖子，即其余帖子都是评论或者间接评论该帖子的id
+}
+user_info = {
+    "username": "",                   #用户名
+    "password": "",		      #密码，加密存储
+    "state": False,		      #登录状态
+    "items": []			      #该用户发表的帖子
+}
+
+
+已经实现的功能：
+实现用户的注册，登录，登出等基本操作
+每页展示一条根帖子及其所有的评论，运用轮询实现评论更新
+实现上一页，下一页，刷新的功能
+实现消息的自动提醒
+搭好了nginx和uwsgi环境
+
+未实现的功能：
+remember me 和用户自动过期的实现
+评论和点赞未能得到id
+docker环境的部署

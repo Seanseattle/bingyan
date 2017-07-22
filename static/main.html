@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Community</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+
+<body>
+<!-- 头部显示栏 -->
+<div class="head">
+  <div class="head-logout"><a href="#">注销登录</a></div>
+  <div class="head-title">欢迎来到匿名社区</div>
+  <div class="head-button">发布动态</div>
+  <div class="head-buttons">
+    <div class="head-pre-button">上一页</div>
+    <div class="head-next-button">下一页</div>
+    <div class="head-reload-button">刷新</div>
+  </div>
+</div>
+<!-- 中间显示区域 -->
+<div class="body-sorts">
+  <ul class="body-list">
+    <li class="li-hover"><a href="#">推荐</a></li>
+    <li class="li-hover-none"><a href="#">吐槽</a></li>
+    <li class="li-hover-none"><a href="#">生活</a></li>
+    <li class="li-hover-none"><a href="#">待定</a></li>
+  </ul>
+</div>
+<!-- 游客评论区 -->
+<div class="body-comments">
+  <div class="comment-area">
+    <!-- 楼主发言 -->
+    <div class="comment-host">
+      <!-- 楼主统一头像 -->
+      <div class="comment-host-img"></div>
+      <!-- 楼主的评论 -->
+      <div class="comment-host-content"></div>
+      <div class="comment-host-use">
+        <div class="use-comment">评论</div>
+        <div class="use-favor">
+          <span class="favor-icon">&#9829;</span>
+          <span class="favor-num">0</span>
+        </div>
+        <div class="use-share">转发</div>
+      </div>
+    </div>
+    <!-- 游客发言区 -->
+    <ul class="comment-guest" id="comment">
+    </ul>
+  </div>
+</div>
+<!-- 撰写评论区 -->
+<div class="comment-write-cover">
+  <div class="comment-write-area">
+    <span class="comment-write-close">&times;</span>
+    <form name="wform" class="comment-write-form">
+      <textarea id="content" minlength="5" maxlength="200"  class="comment-write-block" placeholder="想说啥都行" spellcheck="false"></textarea>
+        <button type="button"  onclick="submitFun()" name=submit class="comment-write-submit" value="提交"></button>
+    </form>
+  </div>
+</div>
+<script src="js/index.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
