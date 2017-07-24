@@ -90,7 +90,7 @@ class User():
                 length = len(cursor["comment_by"])
                 for loop in range(length):
                     if cursor["read"][loop] is False:
-                        post_coll.update({"_id": temp_id}, {"$set": {["read"][loop]: True}})
+                        post_coll.update({"_id": temp_id}, {"$set": {"read"[loop]: True}})
                         # cursor["read"][loop] = True
                         content = post_coll.find_one({"_id": temp_id}, {"content": 1, "_id": 0})
                         # post_coll.update({cursor["comment_by"][loop]:_id}, {"$set": {"comment_by"[loop]: True}})
@@ -186,6 +186,8 @@ class User():
             result.append(order)
             return result
 
+    def recommend(self):
+        pass
 # def to_json(self):
 #     return {
 #         'id': str(self.id),
