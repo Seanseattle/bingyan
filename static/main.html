@@ -18,6 +18,7 @@
     <div class="head-pre-button">上一页</div>
     <div class="head-next-button">下一页</div>
     <div class="head-reload-button">刷新</div>
+      <div class="message-button">未读消息</div>
   </div>
 </div>
 <!-- 中间显示区域 -->
@@ -57,12 +58,21 @@
   <div class="comment-write-area">
     <span class="comment-write-close">&times;</span>
     <form name="wform" class="comment-write-form">
-      <textarea id="content" minlength="5" maxlength="200"  class="comment-write-block" placeholder="想说啥都行" spellcheck="false"></textarea>
-        <button type="button"  onclick="submitFun()" name=submit class="comment-write-submit" value="提交"></button>
+        <textarea id="content" minlength="5" maxlength="200" name="text" class="comment-write-block" placeholder="想说啥都行"
+                  spellcheck="false"></textarea>
+        <input type="button" onclick="submitFun()" name="submit" class="comment-write-submit" value="提交">
     </form>
   </div>
 </div>
-<script src="js/index.js"></script>
-<script src="js/main.js"></script>
+
+
+<div class="message-cover">
+    <div class="message-remain">
+        <span class="message-close">&times;</span>
+        <ul class="comment-guest" id="comment">
+        </ul>
+    </div>
+</div>
+<script src="./js/main.js"></script>
 </body>
 </html>

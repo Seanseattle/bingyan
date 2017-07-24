@@ -41,8 +41,8 @@ ul, li {
   font-size: 28px;
   font-weight: bolder;
   text-align: center;
-    background-image: -webkit-gradient(linear,left top,right top,color-stop(.45, #f22),color-stop(.5, #f2f),color-stop(.55, #22f),color-stop(.6, #2ff),color-stop(.65, #2f2),color-stop(.7, #2f2),color-stop(.75, #ff2),color-stop(.8, #f22));
-    background-image: gradient(linear,left top,right top,color-stop(.45, #f22),color-stop(.5, #f2f),color-stop(.55, #22f),color-stop(.6, #2ff),color-stop(.65, #2f2),color-stop(.7, #2f2),color-stop(.75, #ff2),color-stop(.8, #f22));
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(.45, #f22), color-stop(.5, #f2f), color-stop(.55, #22f), color-stop(.6, #2ff), color-stop(.65, #2f2), color-stop(.7, #2f2), color-stop(.75, #ff2), color-stop(.8, #f22));
+    background-image: gradient(linear, left top, right top, color-stop(.45, #f22), color-stop(.5, #f2f), color-stop(.55, #22f), color-stop(.6, #2ff), color-stop(.65, #2f2), color-stop(.7, #2f2), color-stop(.75, #ff2), color-stop(.8, #f22));
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
@@ -237,6 +237,33 @@ ul, li {
   left: 0;
   background: rgba(0, 0, 0, .5);
 }
+
+.message-cover {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    width: 100%;
+    min-width: 1300px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .5);
+}
+
+.message-remain {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    height: auto;
+    min-height: 400px;
+    margin-top: -250px;
+    margin-left: -350px;
+    background: #ffffff;
+    border-radius: 8px;
+    animation-name: slideIn;
+    animation-duration: .4s;
+}
 .comment-write-area {
   position: fixed;
   top: 50%;
@@ -274,6 +301,22 @@ ul, li {
   color: #ffffff;
   cursor: pointer;
 }
+
+.message-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bolder;
+    color: #000000;
+    cursor: pointer;
+}
+
 .comment-write-block {
   position: absolute;
   top: 50%;
