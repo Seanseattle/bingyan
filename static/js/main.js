@@ -24,48 +24,23 @@ var favorNum = $('.use-favor .favor-num')[0];
 var message_cover = $('.message-cover')[0];
 var message_remain = $('.message-remain')[0];
 var message_button = $('.message-button')[0];
-
+var praise = 0;
+var all_display
+var recommend_display
 commentWriteClose.addEventListener('click', function () {
     commentWriteCover.style.display = 'none';
     commentWriteArea.style.display = 'none';
     wform.text.value = ''
 });
 messageClose.addEventListener('click', function () {
+    $('.ul').filter('.message').find('li').remove();
     message_cover.style.display = 'none';
-    message_remain.style.display = 'none'
+    message_remain.style.display = 'none';
 });
-// 左边栏点击样式的实现
-var showLi = function (i) {
-    for (var j = 0; j < bodyLi.length; j++) {
-        let _j = j;
-        bodyLi[_j].className = 'li-hover-none'
-    }
-    bodyLi[i].className = 'li-hover'
-};
-for (var i = 0; i < bodyLi.length; i++) {
-    let _i = i;
-    bodyLi[_i].addEventListener('click', function (e) {
-        switch (e.target.innerText) {
-            case '推荐':
-                showLi(0);
-                break;
-            case '吐槽':
-                showLi(1);
-                break;
-            case '生活':
-                showLi(2);
-                break;
-            case '待定':
-                showLi(3);
-                break;
-            default:
-                break
-        }
-    })
-}
+
 // 帖子点赞数量的变化
 favor.addEventListener('click', function () {
-    favorNum.innerHTML = parseInt(favorNum.innerHTML) + 1
+    favorNum.innerHTML = parseInt(favorNum.innerHTML) + 1;
     $.ajax(
         {
             url: "http://localhost/praise",
@@ -79,13 +54,23 @@ favor.addEventListener('click', function () {
             )
         }
     )
-})
+});
+
 
 // 设置帖主的相关信息
 var hostSet = function (data) {
-    $('.comment-host .comment-host-content').text(data[0]['content']);
-    $('.comment-host .favor-num').text(data[0]['praise_count']);
-    hostId = data[0]['_id']
+    if (data === 1) {
+        $('.comment-host .comment-host-content').label(data['content']);
+        $('.comment-host .favor-num').text(data['praise_count']);
+        $('.comment-host .time').text(data[0]['post_time']);
+        hostId = data[0]['_id']
+    }
+    else {
+        $('.comment-host .comment-host-content').text(data[0]['content']);
+        $('.comment-host .favor-num').text(data[0]['praise_count']);
+        $('.comment-host .time').text(data[0]['post_time']);
+        hostId = data[0]['_id']
+    }
 };
 
 // 设置评论区的相关信息
@@ -127,43 +112,107 @@ var guestSet = function (data) {
     });
 };
 
-
 //读取页面的order
-if ($.cookie('username') === "") {
-    window.location.href('index.html')
+
+var all = function () {
+    all_display = window.setInterval(function read_post() {
+        $.ajax(
+            {
+                url: "http://localhost/community",
+                type: "POST",
+                dataType: "json",
+                "Content-Type": "application/json",
+                data: JSON.stringify(
+                    {
+                        "order": order,
+                        "username": $.cookie('username')
+                    }
+                ),
+                success: function (data) {
+                    if (data === -1) {
+                        window.location.href = 'index.html'
+                    }
+                    order = data.pop();
+                    if (order > orderMax) {
+                        orderMax = order;
+                    }
+                    hostSet(data);
+                    guestSet(data);
+                }
+            }
+        )
+    }, 300);
 }
 
-window.setInterval(function read_post() {
-    $.ajax(
-        {
-            url: "http://localhost/community",
-            type: "POST",
-            dataType: "json",
-            "Content-Type": "application/json",
-            data: JSON.stringify(
-                {
-                    "order": order,
-                    "username": $.cookie('username')
+var recommend = function () {
+    recommend_display = window.setInterval(function recommend() {
+        $.ajax(
+            {
+                url: "http://localhost/recommend",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(
+                    {
+                        "praise": praise,
+                        "username": $.cookie('username')
+                    }
+                ),
+                success: function (data) {
+                    if (data === -1) {
+                        window.location.href = 'index.html'
+                    }
+                    data.pop()
+                    hostSet(data);
+                    guestSet(data);
                 }
-            ),
-            success: function (data) {
-                if (data === -1) {
-                    window.href.location = 'index.html'
-                }
-                order = data.pop();
-                if (order > orderMax) {
-                    orderMax = order;
-                }
-                hostSet(data);
-                guestSet(data);
             }
-        }
-    )
-}, 3000);
+        )
+    }, 300);
+}
 
+
+// 左边栏点击样式的实现
+var showLi = function (i) {
+    for (var j = 0; j < bodyLi.length; j++) {
+        let _j = j;
+        bodyLi[_j].className = 'li-hover-none'
+    }
+    bodyLi[i].className = 'li-hover'
+};
+for (var i = 0; i < bodyLi.length; i++) {
+    let _i = i;
+    bodyLi[_i].addEventListener('click', function (e) {
+        switch (e.target.innerText) {
+            case '所有':
+                showLi(0);
+                order = 0;
+                window.clearInterval(recommend_display);
+                all()
+                break;
+            case '推荐':
+                showLi(1);
+                praise = 0;
+                window.clearInterval(all_display);
+                recommend()
+                break;
+            case '生活':
+                showLi(2);
+                break;
+            case '待定':
+                showLi(3);
+                break;
+            default:
+                break;
+        }
+    })
+}
 // 给上一页、下一页、刷新添加事件
 headPreButton.addEventListener('click', function () {
     // 给上一页添加事件的函数
+    if (praise > 0) {
+        praise--;
+    }
     if (order < orderMax) {
         order++
     } else {
@@ -174,9 +223,11 @@ headNextButton.addEventListener('click', function () {
     if (order > 0) {
         order--;
     }
+    praise++;
 });
 headReloadButton.addEventListener('click', function () {
     order = 0;
+    praise = 0;
 });
 
 
@@ -187,13 +238,12 @@ message_button.addEventListener('click', function () {
 });
 
 var messageDisplay = function (data) {
-    $('.ul').filter('.message_cover').find('li').remove();
+    $('ul').filter('.message').find('li').remove();
     var message_num;
     message_num = data.length;
     for (let i = 0; i < message_num; i++) {
-        $('.message-remain').append('<li class="guest-content-area"><span class="guest-index">第' + i + '条</span>:<div class="guest-content">' + data[i]['content'] + '<\div><\li>')
+        $('.message').append('<li class="guest-content-area"><span class="guest-index">第' + (i + 1) + '条</span>:<div class="guest-content">' + data[i][i] + '<\div><\li>')
     }
-
 };
 
 //读取页面评论对象的_id,root_id
@@ -214,8 +264,7 @@ var readMassage = function () {
             }
         }
     )
-}
-
+};
 
 
 // 给注销登录添加事件
@@ -274,6 +323,8 @@ function submitFun() {
                 ),
                 success: function () {
                     alert("success");
+                    commentWriteCover.style.display = 'none';
+                    commentWriteArea.style.display = 'none';
                     wform.text.value = ''
                 }
             }

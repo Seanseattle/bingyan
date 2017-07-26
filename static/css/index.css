@@ -41,11 +41,6 @@ ul, li {
   font-size: 28px;
   font-weight: bolder;
   text-align: center;
-    background-image: -webkit-gradient(linear, left top, right top, color-stop(.45, #f22), color-stop(.5, #f2f), color-stop(.55, #22f), color-stop(.6, #2ff), color-stop(.65, #2f2), color-stop(.7, #2f2), color-stop(.75, #ff2), color-stop(.8, #f22));
-    background-image: gradient(linear, left top, right top, color-stop(.45, #f22), color-stop(.5, #f2f), color-stop(.55, #22f), color-stop(.6, #2ff), color-stop(.65, #2f2), color-stop(.7, #2f2), color-stop(.75, #ff2), color-stop(.8, #f22));
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
 }
 .head-button {
   width: 80px;
@@ -169,7 +164,7 @@ ul, li {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 140px;
+  width: 350px;
   height: 30px;
   display: flex;
   justify-content: space-between;
@@ -197,12 +192,26 @@ ul, li {
   font-size: 14px;
   color: #333333;
 }
+
+.time {
+  font-size: 18px;
+  color: #00b4ef;
+  width: 80px;
+}
 .favor-icon {
   font-size: 18px;
   color: red;
   cursor: pointer;
 }
 .comment-guest {
+  position: relative;
+  top: 20px;
+  left: 100px;
+  width: calc(100% - 110px);
+  padding: 0;
+}
+
+.message {
   position: relative;
   top: 20px;
   left: 100px;

@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 from bson import ObjectId
 from werkzeug.security import check_password_hash, generate_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 client = MongoClient('localhost', 27017)
 print(client.address)
@@ -26,7 +27,8 @@ user_info = {
     "username": "",
     "password": "",
     "state": False,
-    "items": []
+    "items": [],
+    "Token": ""
 }
 
 
@@ -34,6 +36,7 @@ class User():
     """
 
     """
+
     def __init__(self):
         pass
 
@@ -41,7 +44,8 @@ class User():
         if user_coll.find({"username": dicts["username"]}).count() >= 1:
             return False
         security_password = generate_password_hash(dicts["password"])
-        user_coll.insert({"username": dicts["username"], "password": security_password, "state": False,"items":[]})
+        user_coll.insert(
+            {"username": dicts["username"], "password": security_password, "state": False, "items": [], "Token": ""})
         return True
 
     def activite(self, username):
@@ -60,12 +64,13 @@ class User():
         return True
 
     def user_login(self, dicts):
+        # Token = Serializer(dicts["username"], expires_in=6000)
         security_password = user_coll.find_one({"username": dicts["username"]}, {"password": 1, "_id": 0})
-        if security_password and check_password_hash(security_password["password"], dicts["password"]):
+        if security_password != None and check_password_hash(security_password["password"], dicts["password"]):
             self.activite(dicts["username"])
-            return True
+            return dict({"result": True})
         else:
-            return False
+            return dict({"result": False})
 
     def post(self, dicts):
         if self.check_activity(dicts["username"]) is True:
@@ -76,7 +81,7 @@ class User():
                 break
             post_id = post_coll.insert(
                 {"content": dicts["post"], "post_time": datetime.now(), "order": max_order + 1, "praise_count": 0,
-                 "username": dicts["username"], "comment_by": [],"read":[],"tag":[]})
+                 "username": dicts["username"], "comment_by": [], "read": [], "tag": []})
             user_coll.update({"username": dicts["username"]}, {"$push": {"items": ObjectId(post_id)}})
             return True
         else:
@@ -85,23 +90,25 @@ class User():
     def get_info(self, dicts):
         data = []
         if self.check_activity(dicts["username"]):
+            count = 0
             for cursor in post_coll.find({"username": dicts["username"]}):
                 temp_id = cursor["_id"]
                 length = len(cursor["comment_by"])
                 for loop in range(length):
                     if cursor["read"][loop] is False:
-                        post_coll.update({"_id": temp_id}, {"$set": {"read"[loop]: True}})
                         # cursor["read"][loop] = True
-                        content = post_coll.find_one({"_id": temp_id}, {"content": 1, "_id": 0})
+                        content = post_coll.find_one({"_id": cursor["comment_by"][loop]}, {"content": 1, "_id": 0})
                         # post_coll.update({cursor["comment_by"][loop]:_id}, {"$set": {"comment_by"[loop]: True}})
-                        data.append(dict({loop: content["content"]}))
+                        data.append(dict({count: content["content"]}))
+                        count += 1
+                        # post_coll.update({"_id":temp_id},{"$set":{"read":True}})
         return data
 
     def comments(self, dicts):
         if self.check_activity(dicts["username"]) is True:
             post_id = post_coll.insert(
                 {"content": dicts["comment"], "post_time": datetime.now(), "comment_who": ObjectId(dicts["_id"]),
-                 "praise_count": 0, "order": 0,"comment_by":[],"read":[],
+                 "praise_count": 0, "order": 0, "comment_by": [], "read": [],
                  "username": dicts["username"], "root_id": ObjectId(dicts["root_id"])})
             user_coll.update({"username": dicts["username"]}, {"$push": {"items": ObjectId(post_id)}})
             if dicts["_id"] == dicts["root_id"]:
@@ -130,8 +137,8 @@ class User():
         result = []
         order = dicts["order"]
         temp_order = 0
-        if order==-1:
-            temp_dict={"content":"到底了"}
+        if order == -1:
+            temp_dict = {"content": "到底了"}
             result.append(temp_dict)
             result.append(order)
             return result
@@ -186,10 +193,42 @@ class User():
             result.append(order)
             return result
 
-    def recommend(self):
-        pass
-# def to_json(self):
-#     return {
+    def recommend(self, dicts):
+        if self.check_activity(dicts["username"]) is False:
+            return -1
+        result = []
+        praise = dicts["praise"]
+        cursor = post_coll.find({"order": {"$gt": 0}}).sort("praise_count", -1)
+        for i in range(praise):
+            try:
+                cursor.next()
+            except StopIteration:
+                print("empty cursor")
+        for posts in cursor:
+            temp_dict = {
+                "content": posts["content"],
+                "post_time": posts["post_time"],
+                "praise_count": posts["praise_count"],
+                "username": posts["username"],
+                "_id": str(posts["_id"])
+            }
+            result.append(temp_dict)
+            for loop in posts["comment_by"]:
+                temp = post_coll.find_one({"_id": loop})
+                temp_dict = {
+                    "content": temp["content"],
+                    "post_time": temp["post_time"],
+                    "praise_count": temp["praise_count"],
+                    "username": temp["username"],
+                    "_id": str(temp["_id"]),
+                    "root_id": str(temp["root_id"])
+                }
+                result.append(temp_dict)
+            break
+        result.append(praise)
+        return result  # def to_json(self):
+
+# return {
 #         'id': str(self.id),
 #         'content': self.content,
 #         'time': self.time,

@@ -4,7 +4,7 @@ from data import User
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 # cors = CORS(app, resources={r"/*": {"origins": "http://localhost:63342\*"}})
 app.secret_key = '123'
 user = User()
@@ -19,10 +19,19 @@ def log():
     if username != "" and password != "":
         user_info = dict({"username": username, "password": password})
         result = user.user_login(user_info)
-        return jsonify({"result": result})
+        return jsonify(result)
     else:
         return jsonify(meg="请输入信息")
 
+
+# @app.route('/remember_me',methods=["POST"])
+# def remember_me():
+#     content = request.get_json(force=True)
+#     remember_me=content["remember_me"]
+#     Token=content["Token"]
+#     user_info = dict({"remember_me":remember_me,"Token":Token})
+#     result = user.user_login(user_info)
+#     return result
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -57,10 +66,7 @@ def write_comments():
         "username":content["username"]
     }
     result=user.comments(dicts)
-    if result=="fail":
-        return jsonify({"result": "fail"})
-    else:
-        return jsonify({"result":"success"})
+    return result
 
 
 @app.route('/community', methods=['POST'])
@@ -98,6 +104,15 @@ def get_info():
         return jsonify(meg="无提醒")
     else:
         return jsonify(data)
+
+
+@app.route('/recommend', methods=["POST"])
+def recommend():
+    content = request.get_json(force=True)
+    praise = content["praise"]
+    username = content["username"]
+    result = user.recommend(dict({"praise": praise, "username": username}))
+    return jsonify(result)
 
 @app.errorhandler(404)
 def not_found(error):

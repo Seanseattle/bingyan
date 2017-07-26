@@ -34,7 +34,7 @@
                             <label for="checkbox1"></label>
                         </div>
                         <span class="text">Remember me</span>
-                        <button type="button"  onclick="login()" class="btn btn-default" id="checkbox1">登录</button>
+                        <button type="button" onclick="login()" class="btn btn-default" id="checkbox1">登录</button>
                         <button type="button" onclick="register()" class="btn btn-default">注册</button>
                     </div>
                 </form>
@@ -43,8 +43,7 @@
     </div>
 </div>
 
-
-
+<script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
 <script type="text/javascript">
     function login() {
@@ -54,14 +53,16 @@
                 "Content-Type": "application/json;charset=utf-8",
                 type: "POST",
                 dataType: "json",
-                data: JSON.stringify({"username": $("#username").val(), "password": $("#password").val()})
+                data: JSON.stringify({
+                    "username": $("#username").val(),
+                    "password": $("#password").val(),
+                })
             }
         ).done(function (result) {
             if (result["result"] === true) {
-                $.cookie('username',$('#username').val());
+                $.cookie('username', $('#username').val());
                 alert("成功登录");
                 window.location.href = "main.html";
-
             }
             else {
                 alert("登录失败");
@@ -73,8 +74,7 @@
         });
     }
     function remember() {
-            $.cookie('username',$('#username').val())
-
+        //       var remember_me = true;
     }
     function register() {
         window.location.href = "signup.html"
@@ -82,4 +82,3 @@
 </script>
 </body>
 </html>
-
